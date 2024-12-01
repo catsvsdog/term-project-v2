@@ -19,7 +19,7 @@ def loadImage(inputPath):
         print("loadimage item: ", item)
         output_image = remove(input_image)
         #output_folder = f"C:\\Users\\irisy\\Desktop\\15-112\\termProject\\Term-Project\\removedbgClothing\\{i}"
-        output_folder =  f"C:\\Users\\irisy\\Desktop\\15-112\\termProject\\term-project-v2\\removedbgClothing\\{i}"
+        output_folder =  f"C:\\Users\\irisy\\Desktop\\15-112\\termProject\\term-project-v2\\remobedtest\\{i}"
         ##print('heloooooooooo', item)
         output_path = output_folder+item[:-4] +".png"
         output_image.save(output_path)
