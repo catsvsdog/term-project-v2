@@ -6,12 +6,31 @@ import os
 from PIL import Image, ImageDraw,ImageFont
 # from generator import Top, Bottom, Outfit
 from outfitObjects import Top, Bottom, Item
+import sys
 
+def get_current_directory():
+  """Returns the absolute path of the current working directory."""
+  return os.getcwd()
+
+
+def construct_file_path(directory, filename):
+  """Constructs the full file path by joining the directory and filename.
+
+  Args:
+    directory: The directory where the file is located.
+    filename: The name of the file.
+
+  Returns:
+    A string representing the full file path.
+  """
+  return os.path.join(directory, filename)
+ 
 def onAppStart(app):
+    current_dir = get_current_directory()
    # app.url = "C:\\Users\\irisy\\Downloads\\cropflower.png"
-    app.b1 = "C:/Users/irisy/Desktop/15-112/termProject/term-project-v2/item.png"
-    app.b2 = "C:\\Users\\irisy\\Desktop\\15-112\\termProject\\term-project-v2\\outfit.png"
-    app.b3 = "C:\\Users\\irisy\\Desktop\\15-112\\termProject\\term-project-v2\\closet.png"
+    app.b1 = construct_file_path(current_dir, 'item.png')
+    app.b2 = construct_file_path(current_dir, 'outfit.png')
+    app.b3 = construct_file_path(current_dir, 'closet.png')  
     app.width = 900
     app.height = 650
     app.itemMode = False
@@ -36,9 +55,9 @@ def onAppStart(app):
     app.items = []
     app.noFiles = True
     app.buttonCol = rgb(109, 119, 99)
-    app.url = "C:\\Users\\irisy\\Downloads\\57E9D6B0-AF0F-4258-BE81-FF09865C1789.png"
-    pilImage1 = Image.open(app.url)
-    app.cmuImage1 = CMUImage(pilImage1)
+    #app.url = "C:\\Users\\irisy\\Downloads\\57E9D6B0-AF0F-4258-BE81-FF09865C1789.png"
+    #pilImage1 = Image.open(app.url)
+    #app.cmuImage1 = CMUImage(pilImage1)
 
     app.word = "Enter here:"
     app.type = False
@@ -71,7 +90,7 @@ def start_redrawAll(app):
     drawLine(0, 600, 900, 600, fill = "white",lineWidth = 4)
     drawLine(50, 0, 50, 650, fill = "white", lineWidth = 4)
     drawLine(850, 0, 850, 650, fill = "white", lineWidth = 4)
-    drawImage(app.url, 620,300, align = "center", width = 400, height = 400)
+    #drawImage(app.url, 620,300, align = "center", width = 400, height = 400)
     drawStar(480, 180, 20, 4, fill = "white", roundness = 50)
     drawStar(730, 410, 20, 4, fill = "white", roundness = 50)
     #draw.text((280,300),"Welcome to", fill = "white", font = font)
@@ -895,9 +914,12 @@ def outfit_redrawAll(app):
         
 
 def main():
-    runAppWithScreens(initialScreen='item')
-main()
+  """ main entrypoint of the program."""
+  runAppWithScreens(initialScreen='item')
 
+
+if __name__ == "__main__":
+    main()
 
 
 #itemmode -> add item:
