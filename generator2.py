@@ -1,4 +1,4 @@
-import random
+from random import randint, choice
 from tp06 import loadImage
 from itemObject import Item
 from cmu_graphics import *
@@ -37,7 +37,12 @@ class Top:
         #     return result
         # else:
         return self.color
-    
+
+    def display(self):
+      """display top."""
+      print(f"top name: {self.name}, color= {self.color}, season={self.season}, type={self.type}.") 
+
+
     def __eq__(self, other):
         if ((self.name == other.name) and (self.color == other.color) and (self.season == other.season) and (self.type == other.type)):
             return True
@@ -77,6 +82,11 @@ class Bottom:
         #     return result
         # else:
         return self.color
+
+    def display(self):
+      """display bottom."""
+      print(f"Bottom name: {self.name}, color= {self.color}, season={self.season}, type={self.type}.") 
+
     def __repr__(self): 
         return f"Bottom: {self.name}"#, color: {self.color}, season: {self.season}"
     def __eq__(self, other):
@@ -84,32 +94,6 @@ class Bottom:
             return True
         else:
             return False
-# top1 = Top("shirt", "red", {"summer", "spring"}, "wellfit")
-# top2 = Top("tank", "beige", {"summer"}, "tight")
-# top3 = Top("brandy", "white", {"spring", "fall", "summer"}, "tight")
-# top4 = Top("uniqlo", "white", {"summer", "fall", "spring"}, "baggy")
-# top5 = Top("johnb", "green", {"summer"}, "tight")
-
-
-
-# bot1 = Bottom("pants", "green", {"spring", "fall"}, "baggy")
-# bot2 = Bottom("shorts", "blue", {"summer"}, "wellfit")
-# bot3 = Bottom("linenPants", "white", {"summer"}, 'baggy')
-# bot4 = Bottom("jeans", "blue", {"summer"}, "baggy")
-# bot5 = Bottom("bmJeans", "gray", {"summer"}, "wellfit")
-
-#bott = [bot1, bot2, bot3, bot4, bot5]
-#topp = [top1, top2, top3, top4,top5] #-already sorted by season
-
-# op1 = Top("bf", "green", {"summer"}, "baggy")
-# top2 = Top("bm", "blue", {"summer"}, "tight")
-# bot1 = Bottom("chuu", "gray", {"summer", "fall"}, "baggy")
-# bot2 = Bottom("jean", "lightBlue", {"summer"}, "tight")
-# topp = [top1, top2]
-# bott = [bot1, bot2]
-# outfitss = []
-# userPref = {'gray', 'blue', 'beige', 'brown', 'white'}
-# print("top1: ", top1.getColor())
 
 types = {
     "baggy": "tight",
@@ -151,28 +135,27 @@ class Outfit:
         return self.top.getType() | self.bottom.getType()
     def updatePref(self, other):
         self.userPrefColors.add(tuple(other))
-    def isGoodOutfit(self):
-        # bot = list(self.bottom.getColor())
-        # top = list(self.top.getColor())
-        
-        #bottomCol = [self.bottom.getColor()]
+    def isColorMatch(self):
+        # try using top to match bottom first
+        topColor = self.top.getColor()
+        bottomColor = self.bottom.getColor()
+        matched_color_list = colorsThatGoWith[topColor]
+        if bottomColor in matched_color_list:
+            print('Eric: find bottom that matches top')
+            return True
+        # now try using bottom to match top since we couldn't find
+        # matching bottom
+        matched_color_list = colorsThatGoWith[bottomColor]
+        if topColor in matched_color_list:
+            print('Eric: find top that matches bottom')
+            return True
+        print('Info, No match find.')
+        return False
 
-        for colorBottom in self.bottom.getColor():
-            for colorTop in self.top.getColor():
-                print("colorrr: ", colorTop)
-                if self.userPrefColors == set():
-                    if colorTop in colorsThatGoWith: 
-                        print("colroTop: ", colorTop)
-                        if colorBottom in colorsThatGoWith[colorTop]:
-                            if self.bottom.getType() in types.get(self.top.getType()):  # Safe dictionary access
-                                return True
-                else:
-                    if colorTop in colorsThatGoWith and colorTop in self.userPrefColors: 
-                        print("colroTop: ", colorTop)
-                        if colorBottom in colorsThatGoWith[colorTop] and colorBottom in self.userPrefColors:
-                            if self.bottom.getType() in types.get(self.top.getType()):  # Safe dictionary access
-                                return True
-        return False 
+    def display(self):
+      """display the top and bottom"""
+      self.top.display()
+      self.bottom.display()
 
     def __repr__(self):
         return f"{self.top}, {self.bottom}"
@@ -183,32 +166,7 @@ class Outfit:
     def __hash__(self):
         return hash(str(self))
     
-season_data = {
-    "Spring": (
-        ("Average Range", (45, 70)),
-        ("Early Spring", (40, 60)),
-        ("Late Spring", (55, 75))
-    ),
-    "Summer": (
-        ("Average Range", (70, 90)),
-        ("Early Summer", (65, 85)),
-        ("Peak Summer", (80, 100))
-    ),
-    "Autumn": (
-        ("Average Range", (50, 70)),
-        ("Early Autumn", (60, 80)),
-        ("Late Autumn", (40, 60))
-    ),
-    "Winter": (
-        ("Average Range", (20, 50)),
-        ("Mild Winter Regions", (30, 60)),
-        ("Harsh Winter Regions", (-10, 30))
-    )
-}
 
-topsSorted = []
-botsSorted = []
-#sort by season:
 def seasons(topList, bottomList, season, topsSorted, botsSorted):
     for top in topList:
         print("get season: ", top.getSeason())
@@ -220,9 +178,71 @@ def seasons(topList, bottomList, season, topsSorted, botsSorted):
             botsSorted.append(bot)
     return topsSorted, botsSorted
 
+
+def getSeasonTops(topList, season):
+  """ return a list of season tops.
+
+  Args:
+    topList: List of Tops objects
+    season: season string, for example: "summer"
+
+  Returns:
+    seasonTops: a list of tops that matches the season or nil
+  """
+  season_tops = []
+  for top in topList:
+    if season in top.getSeason():
+        season_tops.append(top)
+  return season_tops
+
+
+def getSeasonBottoms(bottomList, season):
+  """ return a list of season tops.
+
+  Args:
+    bottomList: List of Bottom objects
+    season: season string, for example: "summer"
+
+  Returns:
+    season_bottoms: a list of tops that matches the season or nil
+  """
+  season_bottoms = []
+  for bottom in bottomList:
+    if season in bottom.getSeason():
+        season_bottoms.append(bottom)
+  return season_bottoms
+
+
+def generateAllGoodOutfits(topList, bottomList):
+  """Take all top and bottom and generate each combination of
+   of outfits based on Good Outfit rules
+
+  Args:
+    topList: List of Top objects
+    bottomList: List of Bottom objects
+
+  Returns:
+    a list of good outfit objects
+  """
+  if not topList:
+    print('Eror, top is empty, please add tops.')
+    sys.exit(0)
+  if not bottomList:
+    print('Error, bottom is empty, please add bottoms')
+    sys.exit(0)
+  good_outfits = []
+  for top in topList:
+    for bottom in bottomList:
+        outfit = Outfit(top, bottom)
+        print('outfit = ', outfit)
+        if outfit.isColorMatch():
+            good_outfits.append(outfit)
+
+  return good_outfits
+
+
 #topsSorted, botsSorted = seasons(topp, bott, "summer",topsSorted, botsSorted)
 #print(topsSorted)
-result = []
 def generateAllPossibleOutfits(output, topList, bottomList):
     if topList == []:
         print("error, please add tops")
@@ -233,11 +253,10 @@ def generateAllPossibleOutfits(output, topList, bottomList):
             for bot in bottomList:
                 newOutfit = Outfit(top, bot)
                 print("newOutfit: ", newOutfit)
-                if newOutfit.isGoodOutfit():
+                if newOutfit.isColorMatch():
                     print("good outfit!")
                     output.append(newOutfit)
     return output
-print(generateAllPossibleOutfits(result, topsSorted, botsSorted))
 
 #only generate 4:
 def displayOutfits(result):
@@ -255,8 +274,8 @@ def displayOutfits(result):
         final = result
     return final
 
-print("final four: ", displayOutfits(result))
-final = displayOutfits(result)
+#print("final four: ", displayOutfits(result))
+#final = displayOutfits(result)
 
 def onAppStart(app):
     app.width = 900
@@ -369,7 +388,7 @@ def onMousePress(app, mouseX, mouseY):
 #                     print("good outfit!")
 #                     output.append(newOutfit)
 #     return output
-print(generateAllPossibleOutfits(result, topsSorted, botsSorted))
+#print(generateAllPossibleOutfits(result, topsSorted, botsSorted))
 
 def addUserPref(outfits, output):
     for clothing in outfits:
@@ -381,6 +400,121 @@ def addUserPref(outfits, output):
     return output
     
 
-def main():
-    runApp()
-main()
+def generate_season_data():
+  season_data = {
+    "Spring": (
+        ("Average Range", (45, 70)),
+        ("Early Spring", (40, 60)),
+        ("Late Spring", (55, 75))
+    ),
+    "Summer": (
+        ("Average Range", (70, 90)),
+        ("Early Summer", (65, 85)),
+        ("Peak Summer", (80, 100))
+    ),
+    "Autumn": (
+        ("Average Range", (50, 70)),
+        ("Early Autumn", (60, 80)),
+        ("Late Autumn", (40, 60))
+    ),
+    "Winter": (
+        ("Average Range", (20, 50)),
+        ("Mild Winter Regions", (30, 60)),
+        ("Harsh Winter Regions", (-10, 30))
+    )
+  }
+  return season_data
+
+
+def pickAGoodOutfitRandomly(outfits):
+  """Randomly pick 1 outfit from good outfit list.
+
+  Args:
+    outfits: list of good outfits
+  
+  Return:
+    A Good outfit or nil if none outfits is empty
+  """
+  if not outfits:
+    print('Warning, outfit is empty.')
+    return None
+  outfit = choice(outfits)
+  return outfit
+
+
+def display4Outfits(outfits, displayed_outfits):
+  """ display 4 outfits at a time.
+  if the number of outfits is less than 4, then
+  display the rest of outfits
+
+  Args:
+    outfits: good outfits list
+
+  return:
+    updated outfits list after removing displayed object
+    displayed_outfits list
+  """
+  # check the outfits list len
+  outfits_size = len(outfits)
+
+  loop_range = loop_range = min(outfits_size, 4)
+
+  for i in range(loop_range): # loop from 0 to 4
+    outfit = pickAGoodOutfitRandomly(outfits)
+    if not outfit:
+        print('Warning: outfit is empty')
+        return
+    # display 1 outfit
+    outfit.display()
+    # remove outfit from good outfit list
+    outfits.remove(outfit)
+    # add displayed outfit into display outfit list
+    displayed_outfits.append(outfit)
+
+  return outfits, displayed_outfits
+
+def test_generator():
+  """ main testing code for generator"""
+
+  print('Starting testing generator...')
+  top1 = Top("shirt", "red", {"summer", "spring"}, "wellfit")
+  top2 = Top("tank", "beige", {"summer"}, "tight")
+  top3 = Top("brandy", "white", {"spring", "fall", "summer"}, "tight")
+  top4 = Top("uniqlo", "white", {"summer", "fall", "spring"}, "baggy")
+  top5 = Top("johnb", "green", {"summer"}, "tight")
+
+  bot1 = Bottom("pants", "green", {"spring", "fall"}, "baggy")
+  bot2 = Bottom("shorts", "blue", {"summer"}, "wellfit")
+  bot3 = Bottom("linenPants", "white", {"summer"}, 'baggy')
+  bot4 = Bottom("jeans", "blue", {"summer"}, "baggy")
+  bot5 = Bottom("bmJeans", "gray", {"summer"}, "wellfit")
+
+  bottoms = [bot1, bot2, bot3, bot4, bot5]
+  tops = [top1, top2, top3, top4,top5]
+
+  print('top list = ', tops)
+  print('bottom list = ', bottoms)
+  my_good_outfits = generateAllGoodOutfits(tops, bottoms)
+
+  print('good outfits: ', my_good_outfits)
+
+  # now I have a list of color matched good outfits
+
+  print('Testing display first 4 outfits')
+
+  # displayed outfits contains a list of outfit being displayed
+  displayed_outfits = []
+
+  print('size of good outfits = ', len(my_good_outfits))
+
+  # run a while loop to print 4 randomy generated outfits until empty
+  while True:
+    if not my_good_outfits:
+      print('Info: good outfit is empty, exit test')
+      return
+
+    my_good_outfits, displayed_outfits = display4Outfits(my_good_outfits, displayed_outfits)
+
+    print('good outfit len = ', len(my_good_outfits))
+    print('displayed = ', len(displayed_outfits))
+

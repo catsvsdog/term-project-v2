@@ -5,7 +5,8 @@ from tp06 import loadImage
 import os
 from PIL import Image, ImageDraw,ImageFont
 # from generator import Top, Bottom, Outfit
-from outfitObjects import Top, Bottom, Item
+from outfitObjects import Item
+from generator2 import *
 import sys
 
 def get_current_directory():
@@ -824,22 +825,6 @@ def fit_onMousePress(app, mouseX, mouseY):
             print(app.tops, app.bottoms)
             
 
-
-
-
-from generator2 import  generateAllPossibleOutfits, displayOutfits
-#Outfit Screen
-def seasons(topList, bottomList, season, topsSorted, botsSorted):
-    for top in topList:
-        print("get season: ", top.getSeason())
-        if season in top.getSeason() :
-            topsSorted.append(top)
-            print("sorted list for now: ", topsSorted)
-    for bot in bottomList:
-        if season in bot.getSeason():
-            botsSorted.append(bot)
-    return topsSorted, botsSorted
-
 def gen_redrawAll(app):
     types = {
         "baggy": "tight",
@@ -915,6 +900,8 @@ def outfit_redrawAll(app):
 
 def main():
   """ main entrypoint of the program."""
+  test_generator()
+  sys.exit(0)
   runAppWithScreens(initialScreen='item')
 
 
