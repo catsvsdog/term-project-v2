@@ -459,6 +459,7 @@ def pickOutfitOnUserPreference(outfits, user_preferences):
     if outfit.getStyle() in user_preferences:
         print('Found user preferred type match')
         return outfit
+
   print('Warning: no user preferred match, return None')
   return None
 
@@ -610,6 +611,7 @@ def test_generator():
 
     print('display outfit len = ', len(displayed_outfits))
     print('preferred list = ', len(preferred_outfits))
+
     displayed_outfits, preferred_outfits = display4UserPreferredOutfits(displayed_outfits, preferred_outfits, user_preferences)
     if displayed_outfits is None and preferred_outfits is None:
         break
