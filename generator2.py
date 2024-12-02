@@ -447,7 +447,7 @@ def pickOutfitOnUserPreference(outfits, user_preferences):
     user_prefereces: a list of user preferences such as color, type in string
   
   Return:
-    A Good outfit or nil if none outfits is empty
+    A Good outfit or nil if outfits is empty or no match is found
   """
   if not outfits:
     print('Warning, outfits is empty!')
@@ -459,7 +459,8 @@ def pickOutfitOnUserPreference(outfits, user_preferences):
     if outfit.getStyle() in user_preferences:
         print('Found user preferred type match')
         return outfit
-
+  print('Warning: no user preferred match, return None')
+  return None
 
 
 def pickAGoodOutfitRandomly(outfits):
@@ -500,6 +501,7 @@ def display4RandomOutfits(outfits, displayed_outfits):
     if not outfit:
         print('Warning: outfits is empty now, return None.')
         return None, None
+
     # display 1 outfit
     outfit.display()
     # remove outfit from good outfit list
@@ -593,9 +595,9 @@ def test_generator():
   # test case #1
   #user_preferences = ["red", "green", "baggy", "wellfit"]
   # test case #2, match 1 color
-  #user_preferences = ["red"]
+  user_preferences = ["red"]
   # test case #3, match 1 type
-  user_preferences = ["baggy"]
+  #user_preferences = ["baggy"]
 
   print('Testing user preference display...')
   # At this moment, all the outfits are in the displayed_outfits list because they are all displayed
@@ -604,11 +606,11 @@ def test_generator():
   while True:
     if not displayed_outfits:
       print('Info: displayed outfits list is empty')
-      return
+      break
 
-    displayed_outfits, preferred_outfits = display4UserPreferredOutfits(displayed_outfits, preferred_outfits, user_preferences)
-    if displayed_outfits is None or preferred_outfits is None:
-        break
     print('display outfit len = ', len(displayed_outfits))
     print('preferred list = ', len(preferred_outfits))
+    displayed_outfits, preferred_outfits = display4UserPreferredOutfits(displayed_outfits, preferred_outfits, user_preferences)
+    if displayed_outfits is None and preferred_outfits is None:
+        break
 
