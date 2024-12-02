@@ -6,7 +6,7 @@ import os
 from PIL import Image, ImageDraw,ImageFont
 # from generator import Top, Bottom, Outfit
 from outfitObjects import Item
-from generator2 import *
+#from generator2 import *
 import sys
 
 def get_current_directory():
@@ -74,6 +74,9 @@ def onAppStart(app):
     app.seen = []
     app.rename = False
     app.curr = ""
+    app.my_good_outfits = []
+    app.xPos = []
+    app.displayed_outfits = []
 
 def drawButton(x, y, width, height, radius, fill='black', border=None, borderWidth=1):
     drawRect(x + radius, y, width - 2 * radius, height, fill=fill)
@@ -138,10 +141,12 @@ def main_onMousePress(app, mouseX, mouseY):
 
 
 #Item screen
-def item_onScreenActivate(app):
-    pass
+# def item_onScreenActivate(app):
+#     pass
 def item_redrawAll(app):
-    drawRect(0,0,app.width, app.height, fill = app.bgCol)
+    bgCol = rgb(129,137,120)
+    buttonCol = rgb(109, 119, 99)
+    drawRect(0,0,app.width,app.height, fill = bgCol)
     drawLabel("Add an item", 450, 90, align = "center", size = 30, font = "Lora", bold = True, fill = "white")
     drawLine(150, 140, 750, 140, fill="white", lineWidth=2)
     drawLine(0, 50, 900, 50, fill = "white", lineWidth = 4)
@@ -151,7 +156,7 @@ def item_redrawAll(app):
     #drawLabel("", 200, 150, align  = "center")
     drawRect(300,180, 300, 350, fill = None, border = "white", borderWidth = 3)
     drawButton(347.5,298,205,65,20,fill = "white")
-    drawButton(350,300,200,60,20,fill = app.buttonCol )
+    drawButton(350,300,200,60,20,fill = buttonCol )
     drawLabel("Upload files", 450, 330, align = "center", font = "Lora", fill = "white", size = 25)
 
     #back button
@@ -823,30 +828,96 @@ def fit_onMousePress(app, mouseX, mouseY):
                     app.fit = ""
                     app.num = 0
             print(app.tops, app.bottoms)
-            
+
+
+
+
+   
+from generator2 import pickAGoodOutfitRandomly, generateAllGoodOutfits, Top, Bottom, Outfit
+# from generator2 import *
+def gen_onScreenActivate(app):
+
+    top1 = Top("bf", {"green"}, {"summer"}, "baggy", "0IMG_1469")
+    top2 = Top("bm",{ "blue"}, {"summer"}, "tight", "5IMG_1479")
+    top3 = Top("Pacsun", {"red"}, {"summer", "spring"}, "tight", "2IMG_1473")
+    top4 = Top("bm", {"white"}, {"summer", "spring"}, "tight", "1IMG_1470")
+    bot1 = Bottom("chuu", {"gray"}, {"summer", "fall"}, "baggy", "3IMG_1475")
+    bot2 = Bottom("jean", {"lightBlue"}, {"summer"}, "well-fit", "4IMG_1476")
+    app.tops = [top1, top2, top3, top4]
+    app.bottoms = [bot1, bot2]
+
+    # app.bottoms = [bot1, bot2, bot3, bot4, bot5]
+    # app.tops = [top1, top2, top3, top4,top5]
+    print('top list = ', app.tops)
+    print('bottom list = ', app.bottoms)
+    app.my_good_outfits = generateAllGoodOutfits(app.tops, app.bottoms)
+
+    print('good outfits: ', app.my_good_outfits)
+
+    # now I have a list of color matched good outfits
+
+    print('Testing display first 4 outfits')
+
+    # displayed outfits contains a list of outfit being displayed
+    app.displayed_outfits = []
+
+    print('size of good outfits = ', len(app.my_good_outfits))
+
+    # #app.finadd.append(Outfit(top2, bot2))
+    app.numCols = 4
+    app.itemSize = (app.width//app.numCols, 230) 
+    app.itemsPerRow = app.numCols
+    app.scrollOffset = 30
+    # app.userPrefColors = {"colors": set()}
+    app.xPos = []
+    # app.final = []
+    # app.likedOutfits = []
+    # #app.userPref = {"color": set(), "type": set()}
+
+    for item in loadImage(app.files):
+        filename = os.path.splitext(os.path.basename(item))[0]
+        print("namsssss: ", filename)
+        Item(item, filename, (0, 0), (200, 200), (0))
+
+    # print('top list = ', app.tops)
+    # print('bottom list = ', app.bottoms)
+    # topsSorted = getSeasonTops(app.tops, "Summer")
+    # botsSorted = getSeasonBottoms(app.bottoms, "Summer")
+    # print("sorted tops: ", topsSorted)
+    # print("sorted bottoms: ", botsSorted)
+    # app.my_good_outfits = generateAllGoodOutfits(topsSorted, botsSorted)
+    # top1 = Top("bf", {"green"}, {"summer"}, "baggy", "0IMG_1469")
+    # top2 = Top("bm",{ "blue"}, {"summer"}, "tight", "5IMG_1479")
+    # top3 = Top("Pacsun", {"red"}, {"summer", "spring"}, "tight", "2IMG_1473")
+    # top4 = Top("bm", {"white"}, {"summer", "spring"}, "tight", "1IMG_1470")
+    # bot1 = Bottom("chuu", {"gray"}, {"summer", "fall"}, "baggy", "3IMG_1475")
+    # bot2 = Bottom("jean", {"lightBlue"}, {"summer"}, "well-fit", "4IMG_1476")
+    # app.tops = [top1, top2, top3, top4]
+    # app.bottoms = [bot1, bot2]
+    # app.my_good_outfits = generateAllGoodOutfits(app.tops, app.bottoms)
+
+    # print('good outfits: ', app.my_good_outfits)
+    
+    # # now I have a list of color matched good outfits
+
+    # print('Testing display first 4 outfits')
+    # app.displayed_outfits = []  
+    # print('size of good outfits = ', len(app.my_good_outfits))
+    # app.numCols = 4
+    # app.itemSize = (app.width//app.numCols, 230) 
+    # app.itemsPerRow = app.numCols
+    # app.scrollOffset = 30
+    # # app.userPrefColors = {"colors": set()}
+    # app.xPos = []
+    # print("app.files: ", app.files)
+
+    # for item in loadImage(app.files):
+    #     filename = os.path.splitext(os.path.basename(item))[0]
+    #     print("namsssss: ", filename)
+    #     Item(item, filename, (0, 0), (200, 200), (0))
+
 
 def gen_redrawAll(app):
-    types = {
-        "baggy": "tight",
-        "tight": "baggy",
-        "wellfit" : ["baggy", "tight"]
-    }
-
-    colorsThatGoWith = {
-        "red": ["black", "white", "blue", "beige", "gray"],
-        "orange": ["white", "brown", "beige","blue", "lightGray", "black"],
-        "yellow": ["gray", "white", "navy", "beige"],
-        "green": ["brown", "white", "black", "beige", "lightGray"],
-        "blue": ["white", "gray", "beige", "brown", "black"],
-        "purple": ["white", "black", "beige", "gray"],
-        "pink": ["white", "gray", "beige", "blue","navy", "brown"],
-        "beige": ["brown", "white", "black", "pink"],
-        "white": ["black", "gray", "beige", "navy", "brown", "white"],
-        "black": ["white", "gray", "beige", "blue", "red", "black"],
-        "gray": ["white", "black", "blue", "pink", "yellow"],
-        "brown": ["white", "beige", "blue", "green", "black"],
-        "lightGray": ["white", "beige", "blue", "pink", "green"]
-    }
     drawRect(0, 0, app.width, app.height, fill = app.bgCol)
     drawLine(150, 140, 750, 140, fill="white", lineWidth=2)
     drawLine(0, 50, 900, 50, fill = "white", lineWidth = 4)
@@ -856,35 +927,87 @@ def gen_redrawAll(app):
     drawLabel("Back", 50+30,50+30,align = "center", fill = "white", font = "Lora", size = 20)
     drawLabel("Outfits", 450, 100, size = 30, fill = "white", font = "Lora")
     
-    if app.files != None:
-        topsSorted = []
-        botsSorted = []
-        # print("season outfpit: ", seasons(app.tops, app.bottoms, "summer",topsSorted, botsSorted))
-        topsSorted, botsSorted = seasons(app.tops, app.bottoms, "Summer",topsSorted, botsSorted)
+    #print('size of good outfits = ', len(app.my_good_outfits))
+    app.xPos.clear()
+    outfits_size = len(app.my_good_outfits)
+    loop_range = min(outfits_size, 4)
+
+    for i in range(loop_range):  # loop from 0 to 4
+        print("im int he loop!")
+        outfit = pickAGoodOutfitRandomly(app.my_good_outfits)
+        if not outfit:
+            print('Warning: outfit is empty')
+            return
         
-        # for top in app.tops:
-        #     print("get season: ", top.getSeason())
-        #     if "summer" in top.getSeason() :
-        #         topsSorted.append(top)
-        #     print("sorted list for now: ", topsSorted)
-        # for bot in app.bottoms:
-        #     if "summer" in bot.getSeason():
-        #         botsSorted.append(bot)
-        print("tops: ", topsSorted)
-        print("bottoms: ", botsSorted)
-        result = []
-        (generateAllPossibleOutfits(result, topsSorted, botsSorted))
-        for i in app.tops:
-            print("season: ", i.getSeason())
-        print("final four: ", displayOutfits(result))
-        final = displayOutfits(result)
-        print("item instances: ", Item.instances)
-        for item in (Item.instances):
-            for clothing in final:
-                if item.serialNum == clothing.serialNum:
-                    x = 250
-                    y = 100
-                    drawImage(item.image, x + item.size[0] / 2 + 20, y + item.size[1] / 2, align="center", width=item.size[0], height=item.size[1])
+        topItem = None
+        bottomItem = None
+        for item in Item.instances:
+            if item.name == outfit.top.serialNum:
+                topItem = item
+            if item.name == outfit.bottom.serialNum:
+                bottomItem = item
+
+        # Only display the outfit if both top and bottom items are found
+        if topItem and bottomItem:
+            print("yeeeee")
+            row = i // app.numCols  
+            col = i % app.numCols
+            itemWidth = 180 + 45
+            itemHeight = topItem.size[1] + 50
+            x = (col * app.itemSize[0]) + itemWidth / 2
+            y = row * itemHeight + 200 - app.scrollOffset
+
+            # Draw the top and bottom items
+            print("top item: ", topItem)
+            print("bottom item: ", bottomItem)
+            drawRect(50,50, 60,30, fill = "black")
+            drawImage(topItem.image, x, y, align="center", width=topItem.size[0], height=topItem.size[1])
+            bottom = y + topItem.size[1] + 20
+            drawImage(bottomItem.image, x, bottom, align="center", width=bottomItem.size[0], height=bottomItem.size[1])
+            app.xPos.append(x)
+            # Draw the "add to outfits" button
+            drawRect(x, 550, 150, 50, fill=None, border="black", align="center")
+            drawLabel("add to outfits", x, 550, size=17, font="Lora")
+
+            # Remove the displayed outfit from the good outfits list and add it to the displayed outfits
+            app.my_good_outfits.remove(outfit)
+            app.displayed_outfits.append(outfit)
+
+        print(Item.instances)
+
+    # Draw the "regenerate" button at the end
+    drawRect(750, 600, 150, 50, fill=None, border="black", align="center")
+    drawLabel("regenerate", 750, 600, size=17, font="Lora")
+    
+    # if app.files != None:
+    #     topsSorted = []
+    #     botsSorted = []
+    #     # print("season outfpit: ", seasons(app.tops, app.bottoms, "summer",topsSorted, botsSorted))
+    #     topsSorted, botsSorted = seasons(app.tops, app.bottoms, "Summer",topsSorted, botsSorted)
+        
+    #     # for top in app.tops:
+    #     #     print("get season: ", top.getSeason())
+    #     #     if "summer" in top.getSeason() :
+    #     #         topsSorted.append(top)
+    #     #     print("sorted list for now: ", topsSorted)
+    #     # for bot in app.bottoms:
+    #     #     if "summer" in bot.getSeason():
+    #     #         botsSorted.append(bot)
+    #     print("tops: ", topsSorted)
+    #     print("bottoms: ", botsSorted)
+    #     result = []
+    #     (generateAllPossibleOutfits(result, topsSorted, botsSorted))
+    #     for i in app.tops:
+    #         print("season: ", i.getSeason())
+    #     print("final four: ", displayOutfits(result))
+    #     final = displayOutfits(result)
+    #     print("item instances: ", Item.instances)
+    #     for item in (Item.instances):
+    #         for clothing in final:
+    #             if item.serialNum == clothing.serialNum:
+    #                 x = 250
+    #                 y = 100
+    #                 drawImage(item.image, x + item.size[0] / 2 + 20, y + item.size[1] / 2, align="center", width=item.size[0], height=item.size[1])
         
 
 def gen_onMousePress(app, mouseX, mouseY):
@@ -899,14 +1022,13 @@ def outfit_redrawAll(app):
         
 
 def main():
-  """ main entrypoint of the program."""
-  test_generator()
-  sys.exit(0)
-  runAppWithScreens(initialScreen='item')
+#   test_generator()
+#   sys.exit(0)
+    runAppWithScreens(initialScreen='item')
+main()
 
-
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()
 
 
 #itemmode -> add item:
