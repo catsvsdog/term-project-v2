@@ -128,11 +128,24 @@ class Outfit:
     def getBottom(self):
         return self.bottom
     def getColor(self):
-        print("top color: ", self.top.getColor())
-        print("bottom color: ", self.bottom.getColor())
-        return self.top.getColor() | self.bottom.getColor()
+      """Returns the color of the outfit.
+
+        Prioritizes the top's color. If the top has no color, 
+        returns the bottom's color.
+      """
+      top_color = self.top.getColor()
+      bottom_color = self.bottom.getColor()
+      if top_color:
+        return top_color
+      else:
+        return bottom_color
     def getStyle(self):
-        return self.top.getType() | self.bottom.getType()
+      topType = self.top.getType()
+      bottomType = self.bottom.getType()
+      if topType:
+        return topType
+      else:
+        return bottomType 
     def updatePref(self, other):
         self.userPrefColors.add(tuple(other))
     def isColorMatch(self):
@@ -426,6 +439,29 @@ def generate_season_data():
   return season_data
 
 
+def pickOutfitOnUserPreference(outfits, user_preferences):
+  """Pick outfit based on User Preference input.
+
+  Args:
+    outfits: list of good outfits
+    user_prefereces: a list of user preferences such as color, type in string
+  
+  Return:
+    A Good outfit or nil if none outfits is empty
+  """
+  if not outfits:
+    print('Warning, outfits is empty!')
+    return None
+  for outfit in outfits: # iterate over each outfit and check color and type against it
+    if outfit.getColor() in user_preferences:
+        print('Found user preferred color match')
+        return outfit
+    if outfit.getStyle() in user_preferences:
+        print('Found user preferred type match')
+        return outfit
+
+
+
 def pickAGoodOutfitRandomly(outfits):
   """Randomly pick 1 outfit from good outfit list.
 
@@ -436,13 +472,13 @@ def pickAGoodOutfitRandomly(outfits):
     A Good outfit or nil if none outfits is empty
   """
   if not outfits:
-    print('Warning, outfit is empty.')
+    print('Warning, outfit is empty, return None object')
     return None
   outfit = choice(outfits)
   return outfit
 
 
-def display4Outfits(outfits, displayed_outfits):
+def display4RandomOutfits(outfits, displayed_outfits):
   """ display 4 outfits at a time.
   if the number of outfits is less than 4, then
   display the rest of outfits
@@ -462,8 +498,8 @@ def display4Outfits(outfits, displayed_outfits):
   for i in range(loop_range): # loop from 0 to 4
     outfit = pickAGoodOutfitRandomly(outfits)
     if not outfit:
-        print('Warning: outfit is empty')
-        return
+        print('Warning: outfits is empty now, return None.')
+        return None, None
     # display 1 outfit
     outfit.display()
     # remove outfit from good outfit list
@@ -472,6 +508,38 @@ def display4Outfits(outfits, displayed_outfits):
     displayed_outfits.append(outfit)
 
   return outfits, displayed_outfits
+
+def display4UserPreferredOutfits(outfits, preferred_outfits, user_preferences):
+  """ display 4 outfits at a time.
+  if the number of outfits is less than 4, then
+  display the rest of outfits
+
+  Args:
+    outfits: good outfits list
+    preferred_outfits: preferred_outfit lists
+
+  return:
+    updated outfits list after removing displayed object
+    preferred_outfits list
+  """
+  # check the outfits list len
+  outfits_size = len(outfits)
+
+  loop_range = loop_range = min(outfits_size, 4)
+
+  for i in range(loop_range): # loop from 0 to 4
+    outfit = pickOutfitOnUserPreference(outfits, user_preferences)
+    if not outfit:
+        print('Warning: outfit is empty, nothing to display!')
+        return None, None
+    # display 1 outfit
+    outfit.display()
+    # remove outfit from good outfit list
+    outfits.remove(outfit)
+    # add displayed outfit into display outfit list
+    preferred_outfits.append(outfit)
+
+  return outfits, preferred_outfits
 
 def test_generator():
   """ main testing code for generator"""
@@ -511,10 +579,36 @@ def test_generator():
   while True:
     if not my_good_outfits:
       print('Info: good outfit is empty, exit test')
-      return
+      break
 
-    my_good_outfits, displayed_outfits = display4Outfits(my_good_outfits, displayed_outfits)
+    my_good_outfits, displayed_outfits = display4RandomOutfits(my_good_outfits, displayed_outfits)
 
+    if my_good_outfits is None or displayed_outfits is None:
+        break
     print('good outfit len = ', len(my_good_outfits))
     print('displayed = ', len(displayed_outfits))
+
+  # dummy user preferences data for testing, in the real code, this data
+  # is constructed dynamically by reading the user selected outfit and analyze it
+  # test case #1
+  #user_preferences = ["red", "green", "baggy", "wellfit"]
+  # test case #2, match 1 color
+  #user_preferences = ["red"]
+  # test case #3, match 1 type
+  user_preferences = ["baggy"]
+
+  print('Testing user preference display...')
+  # At this moment, all the outfits are in the displayed_outfits list because they are all displayed
+  # we will use this list for testings
+  preferred_outfits = []
+  while True:
+    if not displayed_outfits:
+      print('Info: displayed outfits list is empty')
+      return
+
+    displayed_outfits, preferred_outfits = display4UserPreferredOutfits(displayed_outfits, preferred_outfits, user_preferences)
+    if displayed_outfits is None or preferred_outfits is None:
+        break
+    print('display outfit len = ', len(displayed_outfits))
+    print('preferred list = ', len(preferred_outfits))
 
