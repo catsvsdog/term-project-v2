@@ -94,7 +94,7 @@ def start_redrawAll(app):
     drawLabel("Start", 280, 445, size = 25, fill = "white", bold = True, font = "Lora", align = "center")
 
 def start_onMousePress(app,mouseX,mouseY):
-    if (mouseX >= 170 and mouseX <= 340) and (mouseY >= 416 and mouseY <= 462):
+    if (mouseX >= 198 and mouseX <= 372) and (mouseY >= 416 and mouseY <= 472):
         #print("hi")
         setActiveScreen("main")
 
@@ -804,7 +804,8 @@ def gen_redrawAll(app):
         drawLabel("reset", 700, 525, size = 17, bold = True, fill = "white", font = "Lora")
         drawButton(x - 75, 523, 155, 50, 10, fill=app.lightg)
         drawButton(x - 75, 520, 150, 50, 10, fill=app.bgCol)
-        drawLabel("Thats the best outfit! Press regenerate to restart!", 550, 400, fill = app.gray, size = 25, font = "Lora", align = "left")
+        drawLabel("Thats the best outfit!", 550, 400, fill = app.gray, size = 25, font = "Lora", align = "left")
+        drawLabel("Press regenerate to restart!", 550, 440, fill = app.gray, size = 25, font = "Lora", align = "left")
         clothing.pos = (x, 550)
         #print("clothing position: ", clothing.pos)
         drawLabel("add to outfits", x, 545, size=18, fill = "white" ,font="Lora", bold = True)
