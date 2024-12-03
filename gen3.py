@@ -446,7 +446,7 @@ def outfits_onMousePress(app, mouseX, mouseY):
         setActiveScreen("gen")
         
 
-def main():
-    runAppWithScreens(initialScreen='gen')
-main()
+#def main():
+#    runAppWithScreens(initialScreen='gen')
+#main()
 #     #when regnerate:

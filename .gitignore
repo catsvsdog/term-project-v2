@@ -7,6 +7,9 @@
 node_modules/
 dist/
 
+# cmu specific graphic file
+cmu_graphics/meta/updates.json
+
 # Compiled Java class files
 *.class
 

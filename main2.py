@@ -6,12 +6,33 @@ import os
 from PIL import Image, ImageDraw,ImageFont
 # from generator import Top, Bottom, Outfit
 from objects2 import Top, Bottom, Item
+import tkinter as tk
+from tkinter import filedialog
+import sys
+
+def get_current_directory():
+  """Returns the absolute path of the current working directory."""
+  return os.getcwd()
+
+
+def construct_file_path(directory, filename):
+  """Constructs the full file path by joining the directory and filename.
+
+  Args:
+    directory: The directory where the file is located.
+    filename: The name of the file.
+
+  Returns:
+    A string representing the full file path.
+  """
+  return os.path.join(directory, filename)
 
 def onAppStart(app):
    # app.url = "\Users\\irisy\\Downloads\\cropflower.png"
-    app.b1 = "C:/Users/irisy/Desktop/15-112/termProject/term-project-v2/item.png"
-    app.b2 = "C:\\Users\\irisy\\Desktop\\15-112\\termProject\\term-project-v2\\outfit.png"
-    app.b3 = "C:\\Users\\irisy\\Desktop\\15-112\\termProject\\term-project-v2\\closet.png"
+    current_dir = get_current_directory()
+    app.b1 = construct_file_path(current_dir, 'item.png')
+    app.b2 = construct_file_path(current_dir, 'outfit.png')
+    app.b3 = construct_file_path(current_dir, 'closet.png')  
     app.width = 900
     app.height = 650
     app.itemMode = False
@@ -36,7 +57,7 @@ def onAppStart(app):
     app.items = []
     app.noFiles = True
     app.buttonCol = rgb(109, 119, 99)
-    app.url = "C:\\Users\\irisy\\Downloads\\57E9D6B0-AF0F-4258-BE81-FF09865C1789.png"
+    #app.url = "C:\\Users\\irisy\\Downloads\\57E9D6B0-AF0F-4258-BE81-FF09865C1789.png"
     # pilImage1 = Image.open(app.url)
     # app.cmuImage1 = CMUImage(pilImage1)
 
@@ -83,7 +104,7 @@ def start_redrawAll(app):
     drawLine(0, 600, 900, 600, fill = "white",lineWidth = 4)
     drawLine(50, 0, 50, 650, fill = "white", lineWidth = 4)
     drawLine(850, 0, 850, 650, fill = "white", lineWidth = 4)
-    drawImage(app.url, 620,300, align = "center", width = 400, height = 400)
+    #drawImage(app.url, 620,300, align = "center", width = 400, height = 400)
     drawStar(480, 180, 20, 4, fill = "white", roundness = 50)
     drawStar(730, 410, 20, 4, fill = "white", roundness = 50)
     #draw.text((280,300),"Welcome to", fill = "white", font = font)
@@ -159,14 +180,26 @@ def item_onMousePress(app, mouseX, mouseY):
         app.y = 100
         i = 0
         while app.files == None:
-            file_path = app.getTextInput("Enter the path of the file to read: ")
-            print(os.path)
-            if file_path and os.path.exists(file_path):
+            root = tk.Tk()
+            root.withdraw()  # Hide the main window
+            file_path = filedialog.askdirectory(
+                initialdir=".",  # Optional: Set current initial directory
+                title="Select a Directory"  # Optional: Set window title
+            )
+            if file_path:
                 app.files = file_path
-                print(app.files)
             else:
                 app.showMessage("Invalid path! Please enter a valid directory.")
                 app.files == None
+
+            #file_path = app.getTextInput("Enter the path of the file to read: ")
+            #print(os.path)
+            #if file_path and os.path.exists(file_path):
+            #    app.files = file_path
+            #    print(app.files)
+            #else:
+            #    app.showMessage("Invalid path! Please enter a valid directory.")
+            #    app.files == None
         try:
             # !!! change path
             loadImage(app.files)
