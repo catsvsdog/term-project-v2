@@ -6,32 +6,30 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
-def loadImage(inputPath):
-    folder_path = inputPath
-    #folder_path = "clothes"
+def loadImage(inputPath, output_dir):
     result = []
-    i = 0
-    for item in os.listdir(folder_path):
-        #
-        img_path = os.path.join(folder_path, item)
-        input_image = Image.open(img_path)
-        #print("name: ", img_path)
-        print("loadimage item: ", item)
-        output_image = remove(input_image)
-        #output_folder = f"C:\\Users\\irisy\\Desktop\\15-112\\termProject\\Term-Project\\removedbgClothing\\{i}"
-        output_folder =  f"C:\\Users\\irisy\\Desktop\\15-112\\termProject\\term-project-v2\\remobedtest\\{i}"
-        ##print('heloooooooooo', item)
-        output_path = output_folder+item[:-4] +".png"
-        output_image.save(output_path)
-        result.append(output_path)
-        print("result: ", result)
-        i += 1
-      
+    # loop through images in inputPath
+    for i, item in enumerate(os.listdir(inputPath)):
+        if item.lower().endswith(('.png', 'jpg', '.jpeg', '.gif', '.img')):
+            image_path = os.path.join(inputPath, item)
+            try:
+                input_image = Image.open(image_path)
+                print("loading image: ", item)
+                output_image = remove(input_image)
+                output_path = os.path.join(output_dir, f"{i}")
+                base, ext = os.path.splitext(item)
+                # replace .png extension
+                new_file_name = base + '.png'
+                new_file_path_name = output_path + new_file_name
+                # save the image with new file extension to new location
+                output_image.save(new_file_path_name)
+                result.append(new_file_path_name)
+                print(f"Save to : {new_file_path_name}")
+            except Exception as e:
+                print(f"Error process {item}: {e}")
     return result
 
-
 # from sklearn.cluster import KMeans
-
 # Define a list of colors with their RGB values
 COLOR_RANGES = {
     "Red": ((100, 0, 0), (255, 80, 80)),

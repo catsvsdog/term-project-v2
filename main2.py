@@ -202,8 +202,16 @@ def item_onMousePress(app, mouseX, mouseY):
             #    app.files == None
         try:
             # !!! change path
-            loadImage(app.files)
-            for item in ['C:\\Users\\irisy\\Desktop\\15-112\\termProject\\term-project-v2\\processed\\'+item for item in os.listdir('processed')]:
+            # read current directory
+            current_dir = get_current_directory()
+            output_dir = construct_file_path(current_dir, 'remobedtest')
+            os.makedirs(output_dir, exist_ok=True) # Create output folder if it does not exsit
+            # app.files is the input directory of test that contains images
+            loadImage(app.files, output_dir)
+            print('Info: loadImage completed')
+            processed_dir = construct_file_path(current_dir, 'processed')
+            os.makedirs(processed_dir, exist_ok=True) # Create output folder if it does not exsit
+            for item in [processed_dir+item for item in os.listdir('processed')]:
                 filename = os.path.splitext(os.path.basename(item))[0]
                 print("namsssss: ", filename)
                 Item(item, filename, (0, 0), (200, 200), set(), set(), '', None, f"processed\\{filename}.png")
