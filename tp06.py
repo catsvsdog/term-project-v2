@@ -6,7 +6,7 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
-def loadImage(inputPath, output_dir):
+def loadImage(inputPath):
     result = []
     # loop through images in inputPath
     for i, item in enumerate(os.listdir(inputPath)):
@@ -29,7 +29,9 @@ def loadImage(inputPath, output_dir):
                 print(f"Error process {item}: {e}")
     return result
 
+
 # from sklearn.cluster import KMeans
+
 # Define a list of colors with their RGB values
 COLOR_RANGES = {
     "Red": ((100, 0, 0), (255, 80, 80)),
