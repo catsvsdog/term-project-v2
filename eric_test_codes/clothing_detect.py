@@ -7,14 +7,6 @@ import webcolors
 import sys
 import os
 
-executable_path = os.path.dirname(sys.argv[0])
-imagenet_classes_file_path = os.path.join(executable_path, 'imagenet_classes.txt')
-# Load the pre-trained ResNet50 model
-model = ResNet50(weights='imagenet')
-# Load the class labels
-with open(imagenet_classes_file_path, 'r') as f:
-    class_labels = f.read().splitlines()
-
 # Function to preprocess the image for ResNet50
 def preprocess_image(image_path):
     """
@@ -62,6 +54,16 @@ def closest_colour(requested_colour):
         min_colours[(rd + gd + bd)] = name
     return min_colours[min(min_colours.keys())]
 
+def get_color_name(rgb_tuple):
+    try:
+        # Convert RGB to hex
+        hex_value = webcolors.rgb_to_hex(rgb_tuple)
+        # Get the color name directly
+        return webcolors.hex_to_name(hex_value)
+    except ValueError:
+        # If exact match not found, find the closest color
+        return closest_colour(rgb_tuple)
+
 # Function to translate RGB to color name
 def rgb_to_color_name(rgb):
     """
@@ -102,9 +104,15 @@ def detect_cloth_and_details(image_path):
             - A tuple of bounding box dimensions (x, y, width, height).
             - The name of the closest matching color.
     """
-    img = cv2.imread(image_path)
-    rgb_img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    img_resized = cv2.resize(rgb_img, (224, 224))
+    use_grayscale = False
+    if use_grayscale:
+        img = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
+        # resize the image to 28x28
+        img_resized = cv2.resize(img, (28,28))
+    else:
+        img = cv2.imread(image_path)
+        rgb_img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        img_resized = cv2.resize(rgb_img, (224, 224))
     
     # Preprocess the image for ResNet50
     input_tensor = preprocess_input(np.expand_dims(img_resized, axis=0))
@@ -133,7 +141,7 @@ def detect_cloth_and_details(image_path):
         
         # Translate RGB to color name
         #color_name = rgb_to_color_name(dominant_color_rgb)
-        color_name = closest_colour(dominant_color_rgb)
+        color_name = get_color_name(dominant_color_rgb)
 
         dom_color = detect_object_color(img, COLOR_RANGES)
         print(f"color is {dom_color}")
@@ -225,6 +233,17 @@ COLOR_RANGES = {
     "LightGray": ((160, 160, 160), (189, 189, 189))  # For subtle grays
 }
 
+TOP = ["jersey", "vest", "shirt", "wool", "t-shirt", "bulletproof_vest"]
+BOTTOM = ["jean", "overskirt", "skirt", "pant"]
+
+executable_path = os.path.dirname(sys.argv[0])
+imagenet_classes_file_path = os.path.join(executable_path, 'imagenet_classes.txt')
+# Load the pre-trained ResNet50 model
+model = ResNet50(weights='imagenet')
+# Load the class labels
+with open(imagenet_classes_file_path, 'r') as f:
+    class_labels = f.read().splitlines()
+
 current_dir = os.getcwd() # get the current directory
 test_dir = os.path.join(current_dir, "test")
 for filename in os.listdir(test_dir):
@@ -233,6 +252,13 @@ for filename in os.listdir(test_dir):
       print(f"processing file: {filepath}")
       predicted_cloth, dimensions, color_name = detect_cloth_and_details(filepath)
       print("Detected cloth:", predicted_cloth)
+      if predicted_cloth in TOP:
+          print('This is top')
+      elif predicted_cloth in BOTTOM:
+          print('This is Bottom')
+      else:
+          print('Error, failed to detect the type cloth')
+
       if dimensions:
           print("Bounding box dimensions (x, y, width, height):", dimensions)
           print("Dominant color:", color_name)
