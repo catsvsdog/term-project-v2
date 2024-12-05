@@ -1,12 +1,12 @@
 from rembg import remove
 from PIL import Image
-#from cmu_graphics import CMUImage
+from cmu_graphics import CMUImage
 import os
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
-def loadImage(inputPath):
+def loadImage(inputPath, output_dir):
     result = []
     # loop through images in inputPath
     for i, item in enumerate(os.listdir(inputPath)):
