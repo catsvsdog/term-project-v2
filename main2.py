@@ -62,7 +62,7 @@ def onAppStart(app):
     app.items = []
     app.noFiles = True
     app.buttonCol = rgb(109, 119, 99)
-    app.url = "C:\\Users\\irisy\\Downloads\\57E9D6B0-AF0F-4258-BE81-FF09865C1789.png"
+    #app.url = "C:\\Users\\irisy\\Downloads\\57E9D6B0-AF0F-4258-BE81-FF09865C1789.png"
     # pilImage1 = Image.open(app.url)
     # app.cmuImage1 = CMUImage(pilImage1)
 
@@ -127,7 +127,7 @@ def start_redrawAll(app):
     drawLine(0, 600, 900, 600, fill = "white",lineWidth = 4)
     drawLine(50, 0, 50, 650, fill = "white", lineWidth = 4)
     drawLine(850, 0, 850, 650, fill = "white", lineWidth = 4)
-    drawImage(app.url, 620,300, align = "center", width = 400, height = 400)
+    #drawImage(app.url, 620,300, align = "center", width = 400, height = 400)
     drawStar(480, 180, 20, 4, fill = "white", roundness = 50)
     drawStar(730, 410, 20, 4, fill = "white", roundness = 50)
     #draw.text((280,300),"Welcome to", fill = "white", font = font)
@@ -209,11 +209,14 @@ def item_onMousePress(app, mouseX, mouseY):
         app.y = 100
         i = 0
         while app.files == None:
-            file_path = app.getTextInput("Enter the path of the file to read: ")
-            print(os.path)
-            if file_path and os.path.exists(file_path):
+            root = tk.Tk()
+            root.withdraw()  # Hide the main window
+            file_path = filedialog.askdirectory(
+                initialdir=".",  # Optional: Set current initial directory
+                title="Select a Directory"  # Optional: Set window title
+            )
+            if file_path:
                 app.files = file_path
-                print(app.files)
             else:
                 app.showMessage("Invalid path! Please enter a valid directory.")
                 app.files == None
